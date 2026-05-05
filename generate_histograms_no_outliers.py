@@ -13,7 +13,7 @@ warnings.filterwarnings("ignore")
 
 BASE  = os.path.dirname(os.path.abspath(__file__))
 DATA  = os.path.join(BASE, "Dataset", "Attention Task Validation", "data_brsm")
-FIG   = os.path.join(BASE, "figures")
+FIG   = os.path.join(BASE, "figures_no_outliers")
 os.makedirs(FIG, exist_ok=True)
 
 sns.set_theme(style="whitegrid", context="paper", font_scale=1.3)
@@ -117,6 +117,31 @@ summary = pd.concat([lab_summary, phone_summary], ignore_index=True)
 
 all_trials["condition"] = all_trials["group"] + " – " + all_trials["modality"]
 summary["condition"] = summary["group"] + " – " + summary["modality"]
+
+def iqr_bounds(series, k=1.5):
+    clean = pd.to_numeric(series, errors="coerce").dropna()
+    if clean.empty:
+        return (-np.inf, np.inf)
+    q1 = clean.quantile(0.25)
+    q3 = clean.quantile(0.75)
+    iqr = q3 - q1
+    if pd.isna(iqr) or iqr == 0:
+        return (clean.min(), clean.max())
+    return (q1 - k * iqr, q3 + k * iqr)
+
+def remove_iqr_outliers(df, value_col="mean_rt_ms"):
+    keep = pd.Series(True, index=df.index)
+    for (grp, mod), idx in df.groupby(["group", "modality"]).groups.items():
+        lo, hi = iqr_bounds(df.loc[idx, value_col])
+        keep.loc[idx] = df.loc[idx, value_col].between(lo, hi)
+    out = df.loc[keep].copy()
+    return out, keep
+
+summary_filtered, keep_mask = remove_iqr_outliers(summary)
+outlier_pids = summary.loc[~keep_mask, "participant"].unique()
+
+all_trials = all_trials[~all_trials["participant"].isin(outlier_pids)].copy()
+summary = summary[~summary["participant"].isin(outlier_pids)].copy()
 
 print("Generating RT histograms (4-panel)...")
 

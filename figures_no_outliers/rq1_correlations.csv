@@ -1,0 +1,5 @@
+Group,Metric,Pearson_r,p_pearson,Spearman_rho,p_spearman,n
+Single,RT,0.351,0.1291,0.405,0.0769,20
+Single,Accuracy,,,,,20
+Multiple,RT,0.031,0.9104,-0.047,0.8626,16
+Multiple,Accuracy,,,,,16

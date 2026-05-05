@@ -1,0 +1,5 @@
+Group,Modality,n,r_half,r_sb
+Single,Lab,21,0.8,0.889
+Single,Game,21,0.16,0.276
+Multiple,Lab,16,0.661,0.796
+Multiple,Game,16,0.392,0.563

@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore")
 
 BASE  = os.path.dirname(os.path.abspath(__file__))
 DATA  = os.path.join(BASE, "Dataset", "Attention Task Validation", "data_brsm")
-FIG   = os.path.join(BASE, "figures")
+FIG   = os.path.join(BASE, "figures_no_outliers")
 os.makedirs(FIG, exist_ok=True)
 
 sns.set_theme(style="whitegrid", context="paper", font_scale=1.25)
@@ -239,6 +239,18 @@ print(f"Rows after filtering : {len(summary_filtered)}")
 print(summary.loc[summary['iqr_outlier'], ["participant", "group", "modality", "mean_rt_ms"]].to_string(index=False) if summary['iqr_outlier'].any() else "No IQR outliers detected.")
 summary.to_csv(os.path.join(FIG, "participant_summary_with_outliers.csv"), index=False)
 summary_filtered.to_csv(os.path.join(FIG, "participant_summary_iqr_filtered.csv"), index=False)
+
+outlier_pids = summary.loc[summary["iqr_outlier"], "participant"].unique()
+
+# Exclude outliers from foundational data
+lab_all = lab_all[~lab_all["participant"].isin(outlier_pids)].copy()
+phone_all = phone_all[~phone_all["participant"].isin(outlier_pids)].copy()
+phone_completed = phone_completed[~phone_completed["participant"].isin(outlier_pids)].copy()
+
+summary = summary_filtered.copy()
+lab_summary = lab_summary[~lab_summary["participant"].isin(outlier_pids)].copy()
+phone_summary = phone_summary[~phone_summary["participant"].isin(outlier_pids)].copy()
+game_summary = game_summary[~game_summary["participant"].isin(outlier_pids)].copy()
 
 print("\n" + "=" * 65)
 print("QQ PLOTS  (visual normality checks)")
@@ -672,6 +684,28 @@ axes[1].legend(title="Modality")
 plt.suptitle("Overview – RT and Accuracy Across Conditions", fontweight="bold", y=1.02)
 plt.tight_layout()
 plt.savefig(os.path.join(FIG, "overview_boxplots.png"), dpi=300, bbox_inches="tight")
+plt.close()
+
+# Square version for poster
+fig_sq, axes_sq = plt.subplots(2, 1, figsize=(8, 10))
+
+sns.boxplot(data=summary, x="group", y="mean_rt_ms", hue="modality",
+            palette=MOD_PAL, ax=axes_sq[0], linewidth=1.2)
+axes_sq[0].set_title("RT Distribution by Condition", fontweight="bold")
+axes_sq[0].set_xlabel("")
+axes_sq[0].set_ylabel("Mean RT (ms)")
+axes_sq[0].legend(title="Modality", loc="upper left")
+
+sns.boxplot(data=summary, x="group", y="accuracy_pct", hue="modality",
+            palette=MOD_PAL, ax=axes_sq[1], linewidth=1.2)
+axes_sq[1].set_title("Accuracy Distribution by Condition", fontweight="bold")
+axes_sq[1].set_xlabel("Target Load")
+axes_sq[1].set_ylabel("Accuracy (%)")
+axes_sq[1].legend(title="Modality", loc="lower left")
+
+plt.suptitle("Overview – RT and Accuracy", fontweight="bold", y=1.02)
+plt.tight_layout()
+plt.savefig(os.path.join(FIG, "overview_boxplots_square.png"), dpi=300, bbox_inches="tight")
 plt.close()
 
 print("\n" + "=" * 65)

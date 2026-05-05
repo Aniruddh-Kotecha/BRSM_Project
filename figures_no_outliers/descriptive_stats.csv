@@ -1,0 +1,5 @@
+group,modality,N,RT_Mean,RT_SD,Acc_Mean,Acc_SD
+Multiple,Game,16,1847.15,514.35,98.19,2.79
+Multiple,Lab,16,1605.04,273.65,100.0,0.0
+Single,Game,21,2324.74,435.93,100.0,0.0
+Single,Lab,20,1527.11,162.71,100.0,0.0

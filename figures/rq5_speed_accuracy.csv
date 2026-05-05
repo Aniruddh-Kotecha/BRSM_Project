@@ -1,0 +1,15 @@
+Group,Contrast,Spearman_rho,p
+Single,RT vs Hit Rate,,
+Single,RT vs Success Rate,-0.324,0.1524
+Single,RT vs False Alarms,0.324,0.1524
+Single,Level vs RT,0.185,0.423
+Single,Level vs Hit Rate,,
+Single,Level vs Success Rate,-0.652,0.0014
+Single,Level vs False Alarms,0.652,0.0014
+Multiple,RT vs Hit Rate,-0.346,0.1886
+Multiple,RT vs Success Rate,-0.24,0.3705
+Multiple,RT vs False Alarms,0.259,0.332
+Multiple,Level vs RT,0.422,0.1038
+Multiple,Level vs Hit Rate,-0.516,0.0408
+Multiple,Level vs Success Rate,-0.451,0.0792
+Multiple,Level vs False Alarms,0.432,0.0947
